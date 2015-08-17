@@ -31,8 +31,7 @@ class MLogReactTool:
     line  = line.strip('\n').strip('\r')
     if ']' in line:
       index = line.index(']') + 2
-      cmdIndex = index + 2
-      return line[0:cmdIndex], line[cmdIndex:]
+      return line[0:index], line[index:]
     else:
       return "Error: not a standard line", ""
 
