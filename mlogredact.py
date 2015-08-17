@@ -28,6 +28,7 @@ class MLogReactTool:
         exit(0)
 
   def parseLine(self, line):
+    line = line.strip('\n').strip('\r')
     cmdIndex = line.index(']') + 2
 
     return line[0:cmdIndex], line[cmdIndex:]
@@ -82,10 +83,9 @@ class MLogReactTool:
         obfJson   = self.obfuscateJson(jsonData)
         resLine   = resLine.replace(line[begin:end], demjson.encode(obfJson))
     except demjson.JSONDecodeError, e:
-      print('WARNING', 'Can not parse line: %s' % line, file=sys.stderr)
-      print('WARNING', 'JSon string is %s'      % jsonString, file=sys.stderr)
-
-      return ''
+      return 'ERROR Reading the original JSON value'
+    except demjson.JSONEncodeError, e:
+      return 'ERROR Obfuscating JSON'
 
     return resLine
 
