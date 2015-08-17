@@ -28,16 +28,22 @@ class MLogReactTool:
         exit(0)
 
   def parseLine(self, line):
-    line = line.strip('\n').strip('\r')
-    cmdIndex = line.index(']') + 2
-
-    return line[0:cmdIndex], line[cmdIndex:]
+    line  = line.strip('\n').strip('\r')
+    if ']' in line:
+      index = line.index(']') + 2
+      cmdIndex = index + 2
+      return line[0:cmdIndex], line[cmdIndex:]
+    else:
+      return "Error: not a standard line", ""
 
 
   def flattenJson(self, jsonString):
+    jsonString = re.sub('([,{]\s*)([a-zA-Z0-9_]+\.[a-zA-Z0-9\._]+)\s*:', r'\1"\2": ', jsonString)
     jsonString = re.sub('ObjectId\([\'"]([a-zA-Z0-9]*)[\'"]\)', r'"\1"', jsonString)
     jsonString = re.sub('ISODate\(([\'"][a-zA-Z0-9-_ ]*[[\'"])\)', r'"\1"', jsonString)
     jsonString = re.sub('new Date\(([0-9]*)\)', r'"\1"', jsonString)
+    jsonString = re.sub('BinData\([a-zA-Z0-9.-_]*\)', r'"BinData"', jsonString)
+    jsonString = re.sub('BinData', r'"BinData"', jsonString)
 
     return jsonString
 
@@ -83,7 +89,7 @@ class MLogReactTool:
         obfJson   = self.obfuscateJson(jsonData)
         resLine   = resLine.replace(line[begin:end], demjson.encode(obfJson))
     except demjson.JSONDecodeError, e:
-      return 'ERROR Reading the original JSON value'
+      return 'ERROR Deconding JSON'
     except demjson.JSONEncodeError, e:
       return 'ERROR Obfuscating JSON'
 
@@ -94,8 +100,8 @@ class MLogReactTool:
     with open(self.file) as f:
       for line in f:
         time, message = self.parseLine(line)
-        message = self.obfuscateJsonLine(message)
-
+        if not message == "":
+          message = self.obfuscateJsonLine(message)
         print('%s %s' % (time, message))
 
 def main():
