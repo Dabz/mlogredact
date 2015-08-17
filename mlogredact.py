@@ -34,7 +34,6 @@ class MLogReactTool:
 
 
   def flattenJson(self, jsonString):
-    jsonString = jsonString.decode('UTF-16', 'ignore')
     jsonString = re.sub('ObjectId\([\'"]([a-zA-Z0-9]*)[\'"]\)', r'"\1"', jsonString)
     jsonString = re.sub('ISODate\(([\'"][a-zA-Z0-9-_ ]*[[\'"])\)', r'"\1"', jsonString)
     jsonString = re.sub('new Date\(([0-9]*)\)', r'"\1"', jsonString)
@@ -72,6 +71,7 @@ class MLogReactTool:
 
   def obfuscateJsonLine(self, line):
     jsons   = self.findJson(line)
+    line    = line.decode('UTF-8', 'ignore')
     resLine = line
 
     try:
@@ -83,6 +83,8 @@ class MLogReactTool:
         resLine   = resLine.replace(line[begin:end], demjson.encode(obfJson))
     except demjson.JSONDecodeError, e:
       print('WARNING', 'Can not parse line: %s' % line, file=sys.stderr)
+      print('WARNING', 'JSon string is %s'      % jsonString, file=sys.stderr)
+
       return ''
 
     return resLine
