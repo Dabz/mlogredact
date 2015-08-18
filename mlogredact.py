@@ -120,11 +120,6 @@ class MLogReactTool:
           message = self.obfuscateJsonLine(message)
           message = self.obfuscateIPLine(message)
 
-        if not time.strip():
-          time = ''
-        if not message.strip():
-          message = ''
-
         print('%s %s' % (time.encode('ascii'), message.encode('ascii', 'ignore')))
 
 def main():
