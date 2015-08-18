@@ -17,12 +17,15 @@ class MLogReactTool:
 
 
   def __init__(self):
-    file = '/var/log/mongod.log'
+    self.file  = '/var/log/mongod.log'
+    self.debug = False
 
-    opts, args = getopt.getopt(sys.argv[1:],":f:")
+    opts, args = getopt.getopt(sys.argv[1:],":f:d")
     for opt, arg in opts:
       if opt == '-f':
         self.file = arg
+      elif opt == '-d':
+        self.debug = True
       else:
         self.printUsage()
         exit(0)
@@ -33,7 +36,10 @@ class MLogReactTool:
       index = line.index(']') + 2
       return line[0:index], line[index:]
     else:
-      return "Error: not a standard line", ""
+      msg, e = "Error: not a standard line", ""
+      if self.debug:
+        msg += ' (' + line + ')'
+      return msg, e
 
 
   def flattenJson(self, jsonString):
@@ -44,11 +50,14 @@ class MLogReactTool:
     jsonString = re.sub('BinData\([a-zA-Z0-9.-_]*\)', r'"BinData"', jsonString)
     jsonString = re.sub('BinData', r'"BinData"', jsonString)
 
+    jsonString = re.sub(r':\s*([a-zA-Z\.0-9-_/@]+)', r': "\1"', jsonString)
+
     return jsonString
 
 
   def findJson(self, line):
     counter = 0
+    beg     = 0
     res     = []
 
     for i, c in enumerate(line):
@@ -88,11 +97,19 @@ class MLogReactTool:
         obfJson   = self.obfuscateJson(jsonData)
         resLine   = resLine.replace(line[begin:end], demjson.encode(obfJson))
     except demjson.JSONDecodeError, e:
-      return 'ERROR Deconding JSON'
+      msg = 'ERROR Deconding JSON'
+      if self.debug:
+        msg += ' (' + jsonString + ')'
+      return msg
     except demjson.JSONEncodeError, e:
       return 'ERROR Obfuscating JSON'
 
     return resLine
+
+  def obfuscateIPLine(self, message):
+    message = re.sub(r'[0-9]+\.[0-9]+\.[0-9]+', r'%d.%d.%d' % (random.randint(1, 254), random.randint(1, 254), random.randint(1, 254)), message)
+    message = re.sub(r'[0-9]+\.[0-9]+\.[0-9]+', r'%d.%d.%d' % (random.randint(1, 254), random.randint(1, 254), random.randint(1, 254)), message)
+    return message
 
 
   def run(self):
@@ -101,6 +118,7 @@ class MLogReactTool:
         time, message = self.parseLine(line)
         if not message == "":
           message = self.obfuscateJsonLine(message)
+          message = self.obfuscateIPLine(message)
         print('%s %s' % (time, message))
 
 def main():
