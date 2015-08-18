@@ -32,7 +32,8 @@ class MLogReactTool:
 
   def parseLine(self, line):
     line  = line.strip('\n').strip('\r')
-    if ']' in line:
+    line  = line.decode('UTF-8', 'ignore')
+    if ']' in line and line.index(']') < (len(line) - 2):
       index = line.index(']') + 2
       return line[0:index], line[index:]
     else:
@@ -86,7 +87,6 @@ class MLogReactTool:
 
   def obfuscateJsonLine(self, line):
     jsons   = self.findJson(line)
-    line    = line.decode('UTF-8', 'ignore')
     resLine = line
 
     try:
@@ -119,7 +119,13 @@ class MLogReactTool:
         if not message == "":
           message = self.obfuscateJsonLine(message)
           message = self.obfuscateIPLine(message)
-        print('%s %s' % (time, message))
+
+        if not time.strip():
+          time = ''
+        if not message.strip():
+          message = ''
+
+        print('%s %s' % (time.encode('ascii'), message.encode('ascii', 'ignore')))
 
 def main():
   mlogredact = MLogReactTool()
