@@ -50,7 +50,7 @@ class MLogReactTool:
     jsonString = re.sub('BinData\([a-zA-Z0-9.-_]*\)', r'"BinData"', jsonString)
     jsonString = re.sub('BinData', r'"BinData"', jsonString)
 
-    jsonString = re.sub(r':\s*([a-zA-Z\-_/@]+[0-9\.]*[a-zA-Z\.-_/0-9@]*)', r': "\1"', jsonString)
+    jsonString = re.sub(r':\s*([a-zA-Z\-_/@]+[a-zA-Z\.-_/0-9@]*)', ": '\1'", jsonString)
 
     return jsonString
 
