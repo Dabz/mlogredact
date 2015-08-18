@@ -92,10 +92,13 @@ class MLogReactTool:
     try:
       for begin, end in jsons:
         jsonString = line[begin:end]
-        jsonString = self.flattenJson(jsonString)
-        jsonData  = demjson.decode(jsonString)
-        obfJson   = self.obfuscateJson(jsonData)
-        resLine   = resLine.replace(line[begin:end], demjson.encode(obfJson))
+        if '...' in jsonString:
+          resLine = resLine.replace(line[begin:end:], '{"_id": "document too big to be obfuscated"')
+        else:
+          jsonString = self.flattenJson(jsonString)
+          jsonData  = demjson.decode(jsonString)
+          obfJson   = self.obfuscateJson(jsonData)
+          resLine   = resLine.replace(line[begin:end], demjson.encode(obfJson))
     except demjson.JSONDecodeError, e:
       msg = 'ERROR Deconding JSON'
       if self.debug:
