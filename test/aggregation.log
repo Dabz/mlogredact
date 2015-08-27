@@ -1,4 +1,4 @@
-Apr  5 15:57:20 m202-ubuntu mongod.27017[808]: Fri Apr  5 15:57:20 [conn16030] query serverside.scrum_master query: { $query: { datetime_used: { $ne: null } }, $orderby: { _id: 1 } } cursorid:4632274184056772980 ntoreturn:10 ntoskip:0 nscanned:7000376 keyUpdates:0 numYields: 34001 locks(micros) r:31650724 nreturned:10 reslen:2060 16310ms
+Apr  5 15:57:20 m202-ubuntu mongod.27017[808]: Fri Apr  5 15:57:20 [conn16030] query serverside.scrum_master query: { $query: { datetime_used: { $nin: [0, 1] } }, $orderby: { _id: 1 } } cursorid:4632274184056772980 ntoreturn:10 ntoskip:0 nscanned:7000376 keyUpdates:0 numYields: 34001 locks(micros) r:31650724 nreturned:10 reslen:2060 16310ms
 Apr  5 15:57:20 m202-ubuntu mongod.27017[808]: Fri Apr  5 15:57:20 [conn17594] end connection 192.0.2.3:16035 (52 connections now open)
 Apr  5 15:57:20 m202-ubuntu mongod.27017[808]: Fri Apr  5 15:57:20 [initandlisten] connection accepted from 192.0.2.3:16038 #17610 (53 connections now open)
 Apr  5 15:57:21 m202-ubuntu mongod.27017[808]: Fri Apr  5 15:57:21 [conn17608] end connection 192.0.2.6:35177 (52 connections now open)

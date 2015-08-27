@@ -75,16 +75,25 @@ class MLogReactTool:
 
   def obfuscateJson(self, jsonData):
     for key, value in jsonData.iteritems():
-      if isinstance(value, six.string_types):
-        jsonData[key] = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(len(value)))
-      elif isinstance(value, datetime.date):
-        jsonData[key] = datetime(random.randint(2000, 2015), random.randint(1, 12), random.randint(1, 28))
-      elif type(value) is dict:
-        jsonData[key] = self.obfuscateJson(value)
-      else:
-        jsonData[key] = random.randint(0, 1000)
+      jsonData[key] = self.obfuscateJsonElt(value)
 
     return jsonData
+
+
+  def obfuscateJsonElt(self, value):
+    if isinstance(value, six.string_types):
+      return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(len(value)))
+    elif isinstance(value, datetime.date):
+      return datetime(random.randint(2000, 2015), random.randint(1, 12), random.randint(1, 28))
+    elif type(value) is dict:
+      return self.obfuscateJson(value)
+    elif isinstance(value, list):
+      atmp = []
+      for elt in value:
+        atmp.append(self.obfuscateJsonElt(elt))
+      return atmp
+    else:
+      return random.randint(0, 1000)
 
 
   def obfuscateJsonLine(self, line):
