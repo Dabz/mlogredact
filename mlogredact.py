@@ -79,6 +79,8 @@ class MLogReactTool:
         jsonData[key] = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(len(value)))
       elif isinstance(value, datetime.date):
         jsonData[key] = datetime(random.randint(2000, 2015), random.randint(1, 12), random.randint(1, 28))
+      elif type(value) is dict:
+        jsonData[key] = self.obfuscateJson(value)
       else:
         jsonData[key] = random.randint(0, 1000)
 
